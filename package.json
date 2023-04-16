@@ -1,6 +1,6 @@
 {
     "name": "checkerz",
-    "version": "1.0.1",
+    "version": "1.2.0",
     "type": "module",
     "description": "A package to validate input.",
     "author": "Vivek Joshi",
