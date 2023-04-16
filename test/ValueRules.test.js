@@ -1,6 +1,5 @@
 import RuleFactory from "../src/RuleFactory.js";
 
-//! Check for unexpected data types in tests.
 const name = "Test";
 describe("Type Rules Tests", () => {
     test.each([
@@ -60,4 +59,44 @@ describe("Type Rules Tests", () => {
     ])("Required Rule", (rule, value, result) => {
         expect(rule.verify(value)).toBe(result);
     });
+
+    test.each([
+        [RuleFactory("accepted", name), "1", true],
+        [RuleFactory("accepted", name), 1, true],
+        [RuleFactory("accepted", name), "True", true],
+        [RuleFactory("accepted", name), true, true],
+        [RuleFactory("accepted", name), "yes", true],
+        [RuleFactory("accepted", name), "on", true],
+        [RuleFactory("accepted", name), " ", false],
+        [RuleFactory("accepted", name), "", false],
+        [RuleFactory("accepted", name), 2, false],
+    ])("Required Rule", (rule, value, result) => {
+        expect(rule.verify(value)).toBe(result);
+    });
+
+    test.each([
+        [RuleFactory("after", name, new Date("2023-04-14")), new Date("2023-04-14"), false],
+        [RuleFactory("after", name, new Date("2023-04-14")), new Date("2023-04-13"), false],
+        [RuleFactory("after", name, new Date("2023-04-14")), new Date("2023-04-15"), true],
+
+        [RuleFactory("afterOrEqual", name, new Date("2023-04-14")), new Date("2023-04-14"), true],
+        [RuleFactory("afterOrEqual", name, new Date("2023-04-14")), new Date("2023-04-13"), false],
+        [RuleFactory("afterOrEqual", name, new Date("2023-04-14")), new Date("2023-04-15"), true],
+
+        [RuleFactory("before", name, new Date("2023-04-14")), new Date("2023-04-14"), false],
+        [RuleFactory("before", name, new Date("2023-04-14")), new Date("2023-04-13"), true],
+        [RuleFactory("before", name, new Date("2023-04-14")), new Date("2023-04-15"), false],
+
+        [RuleFactory("beforeOrEqual", name, new Date("2023-04-14")), new Date("2023-04-14"), true],
+        [RuleFactory("beforeOrEqual", name, new Date("2023-04-14")), new Date("2023-04-13"), true],
+        [RuleFactory("beforeOrEqual", name, new Date("2023-04-14")), new Date("2023-04-15"), false],
+    ])("Date Rule", (rule, value, result) => {
+        expect(rule.verify(value)).toBe(result);
+    });
+
+    // test.each([
+    //     [RuleFactory(""), , true],
+    // ])("# Rule", (rule, value, result) => {
+    //     expect(rule.verify(value)).toBe(result);
+    // });
 });

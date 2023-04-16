@@ -65,7 +65,7 @@ export default class Validator {
      */
     check(obj) {
         const response = new Response();
-        this.#validate(obj, this.attributes, response, 'obj.');
+        this.#validate(obj, this.attributes, response);
         return response;
     }
 

@@ -4,7 +4,6 @@ export default class IsArray {
     }
 
     verify(value) {
-        if (value === null) return false;
         return Array.isArray(value);
     }
 
