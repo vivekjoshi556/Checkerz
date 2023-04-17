@@ -23,8 +23,14 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
+      
+      # Remove "type": "module" from package.json
+      - run: sed -i.bak '/"type": "module"/d' package.json
+      # Install Dependencies
       - run: npm ci
+      # Build for ES5 & ES6
       - run: npm run build
+      # Publish the package.
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

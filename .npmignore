@@ -8,3 +8,4 @@ notes.txt
 webpack.config.cjs
 .npmignore
 .babelrc
+./src/
