@@ -1,14 +1,13 @@
 export default class IsLessThanEqualTo {
-    constructor(name, upper) {
-        this.name = name;
+    constructor(upper) {
         this.upper = upper;
     }
 
-    verify(value) {
+    verify({value}) {
         return value <= this.upper;
     }
 
-    errMessage() {
-        return `${this.name} length must be less than or equal to ${this.upper}.`;
+    errMessage(name) {
+        return `${name} length must be less than or equal to ${this.upper}.`;
     }
 }

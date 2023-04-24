@@ -24,10 +24,10 @@ Once the constructor is imported you can create as many validator as you like an
 ```js
 // Rules validator should use.
 const rules = {
-    name: 'string|required',
+    name: "string|required",
     address: {
-        city: 'string|required|len:3,8', 
-        state: 'string|required|len:3,8'
+        city: "string|required|len:3,8", 
+        state: "string|required|len:3,8"
     },
 };
 
@@ -81,8 +81,8 @@ Ouput:
     
     ```js
     address: {
-        city: 'string|required|len:3,6',
-        state: 'string|required|len:3,8',
+        city: "string|required|len:3,6",
+        state: "string|required|len:3,8",
         __name: "Address"
     },
     ```
@@ -95,30 +95,132 @@ Type Rules:
 Checks whether the values is of the type specified.
 - array
 - boolean
+- date
 - json
 - string
 - number
 
 Value Rules:
+- Accepted: <br />
+    - Checks if the value is one of the following values: "1", 1, "True", true, "yes", "on".
+    - Can be used for checkboxes like for terms & conditions.
+
+        ```js
+        // Validator Rules:
+        const rules = {
+            "tnc": "accepted"
+        };
+        ```
+
+- After: <br />
+    - Checks if the a particular date is after a given date.
+    - Can be used to check if user is not giving an invalid date.
+    
+        ```js
+        // Validator Rules:
+        const rules = {
+            "dob": "after:2023/07/01",
+        };
+        ```
+
+- AfterOrEqual: <br />
+    - Similar to after but also returns true for same day.
+
+        ```js
+        // Validator Rules:
+        const rules = {
+            "dob": "afterOrEqual:2023/07/01",
+        };
+        ```
+
+- Before: <br />
+    - Checks if the a particular date is before a given date.
+    - Can be used to check age limit based on DOB.
+    
+        ```js
+        // Validator Rules:
+        const rules = {
+            "dob": "before:2023/07/01",
+        };
+        ```
+
+- BeforeOrEqual: <br />
+    - Similar to before but also returns true for same day.
+
+- confirmed: <br />
+    - Looks for a key named "{current_key_name}_confirmed" in the object at same level, & sees if the values match.
+    - Can be used for passwords.
+
+        ```js
+        // Validator Rules:
+        const rules = {
+            "email": "email",
+            "password": "string|confirmed"
+        };
+
+        // Object to validate.
+        let user = {
+            "email": "test@checkerz.com",
+            "password": "password",
+            "password_confirmed": "password"
+        };
+        ```
+
 - email: <br />
     Checks if the value is a valid email.
+
 - gt: <br />
     Checks if the value is greater than the given number.
+
 - gte: <br />
     Checks if the value is greater than or equal to the given number.
+
 - len: <br />
-    * Checks if the length is in given range.
-    * If a single value is given it is considered as lower limit.
+    - Expects the value to be validated to be an Array or a String.
+    - Checks if the length is in given range.
+    - If a single value is given it is considered as lower limit.
+
         ```js
         "name": "len:3" // Length must be atleast 3 characters.
         ```
-    * If 2 values are given 1st is considered lower and 2nd as upper limit.
+        
+    - If 2 values are given 1st is considered lower and 2nd as upper limit.
+    
         ```js
         "name": "len:3,6" // Length must be 3-6 characters.
         ```
+
 - lt: <br />
     Checks if the value is less than the given number.
+
 - lte: <br />
     Checks if the value is less than or equal to the given number.
+
 - required: <br />
     Checks if the value is the value is present & must not be null or undefined.
+
+- requiredIf: <br />
+    - Conditional version of required. 
+    - The values is required if a certain key matches some value. If the specified doesn't match the specified value then this becomes an optional field.
+    - Since, we are using objects we have 2 method to reference a key in the object. 
+        - Starting at top: To access from top start with a '.' and then traverse the object as you would with a dot notation. In the example below state is required phone.type = home. (Notice how it starts with a '.').
+
+        - Starting at current level: Traverse the object as you would with a dot notation. (Notice that since it is at same level no '.' is required).
+    <br />
+
+    ```js
+    // Rules validator should use.
+    const rules = {
+        "person": {
+            "name": "string|required",
+            "address": {
+                "state": "string|requiredIf:.phone.type=home",
+                "zip": "string|requiredIf:state=NY"
+            }
+        },
+        "phone": {
+            "number": "string|required",
+            "type": "string|required"
+        }
+    };
+    ```

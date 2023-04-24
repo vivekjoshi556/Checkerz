@@ -1,9 +1,5 @@
 export default class IsJSON {
-    constructor(name) {
-        this.name = name;
-    }
-
-    verify(value) {
+    verify({value}) {
         try {
             JSON.parse(value);
         } catch (e) {
@@ -12,7 +8,7 @@ export default class IsJSON {
         return true;
     }
 
-    errMessage() {
-        return `${this.name} is not a valid json.`;
+    errMessage(name) {
+        return `${name} is not a valid json.`;
     }
 }

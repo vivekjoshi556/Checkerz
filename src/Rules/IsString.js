@@ -1,13 +1,9 @@
 export default class IsString {
-    constructor(name) {
-        this.name = name;
-    }
-
-    verify(value) {
+    verify({value}) {
         return typeof value === "string";
     }
 
-    errMessage() {
-        return `${this.name} is not a valid String.`;
+    errMessage(name) {
+        return `${name} is not a valid String.`;
     }
 }

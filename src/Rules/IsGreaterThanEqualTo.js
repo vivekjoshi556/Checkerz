@@ -1,14 +1,13 @@
 export default class IsGreaterThanEqualTo {
-    constructor(name, lower) {
-        this.name = name;
+    constructor(lower) {
         this.lower = lower;
     }
 
-    verify(value) {
+    verify({value}) {
         return value >= this.lower;
     }
 
-    errMessage() {
-        return `${this.name} must be greater than or equal to ${this.lower}.`;
+    errMessage(name) {
+        return `${name} must be greater than or equal to ${this.lower}.`;
     }
 }

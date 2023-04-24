@@ -8,6 +8,7 @@ export default class Validator {
     constructor(obj = {}, name = "Obj") {
         this.name = name;
         this.attributes = this.process(obj, name);
+        this.values = undefined; // Object containing values for validation.
     }
 
     /**
@@ -18,9 +19,9 @@ export default class Validator {
      */
     process(obj, name) {
         const validators = {};
-        name = name;
         Object.keys(obj).forEach((key) => {
             let _name = `${name}.${key}`;
+
             if (typeof obj[key] === 'object') { // If the value contains sub-properties for the current key.
                 if(obj[key].hasOwnProperty("__name") && obj[key] !== undefined) {
                     _name = obj[key].__name;
@@ -28,10 +29,7 @@ export default class Validator {
                 }
                 validators[key] = new Validator(obj[key], _name);
             } else { // If the value is the validators for current key.
-                validators[key] = {
-                    required: false,
-                    workers: {},
-                };
+                validators[key] = {workers: {}};
                 const rules = obj[key].split('|');
 
                 // Check last Property if it is a name.
@@ -43,15 +41,28 @@ export default class Validator {
                     }
                 }
 
-                // Check each validator.
+                validators[key].name = _name;
+                
+                // Register workers.
                 rules.forEach((rule) => {
-                    if (rule === 'required')
-                        validators[key].required = true;
-                    else { // Split for properties that might have additional parameters.
-                        const prop = rule.split(':');
-                        validators[key].workers[[prop[0]]] = prop.length === 1 ? RuleFactory(prop[0], _name) : RuleFactory(prop[0], _name, ...prop[1].split(','));
-                    }
+                    const prop = rule.split(':');
+                    
+                    let { rule: ruleObj, level } = prop.length === 1 
+                        ? RuleFactory(prop[0], key) 
+                        : RuleFactory(prop[0], key, ...prop[1].split(','));
+
+                    if(validators[key].workers[level] === undefined)
+                        validators[key].workers[level] = ruleObj;
+                    else 
+                        throw new Error(`Conflicting Rules found for ${ _name }`);
                 });
+
+                // Ensures that rules are validated in a particular order.
+                validators[key].workers = Object.keys(validators[key].workers).sort()
+                    .reduce((accumulator, idx) => {
+                        accumulator[idx] = validators[key].workers[idx];
+                        return accumulator;
+                    }, {});
             }
         });
 
@@ -59,25 +70,32 @@ export default class Validator {
     }
 
     /**
-     *
+     * Function for user for using the validator.
+     * 
      * @param {Object} obj - object to be validated
      * @returns {Response}
      */
     check(obj) {
+        this.values = obj;
         const response = new Response();
         this.#validate(obj, this.attributes, response);
+        this.values = undefined;
         return response;
     }
 
     /**
-     *
+     * Function that performs the validation of provided values.
+     * 
      * @param {Object} obj - object to be validated.
      * @param {Object} marker - the validator object.
      * @param {Response} response - response object.
      * @param {String} name - name of the object validating.
      */
     #validate(obj, marker, response) {
-        const keys = Object.keys(obj); // Find the keys that should be present.
+        // Find the keys that should be present according to the validator.
+        const keys = Object.keys(marker); 
+
+        // Check for each key in the given values.
         Object.keys(marker).forEach((key) => {
             let val = obj[key] === undefined ? {} : obj[key];
 
@@ -87,25 +105,31 @@ export default class Validator {
                 return;
             }
 
-            val = obj[key];
-            const isPresent = new RuleFactory('required').verify(val);
+            const { workers } = marker[key];
+            const workerKeys = Object.keys(workers);
+            const isPresent = new RuleFactory('required').rule.verify({value: obj[key]});
 
-            // If this key is required.
-            if(marker[key].required && !isPresent) {
-                response.errors.push(`${key} property was required but was not found.`);
-                return;
+            // If there is a required rule.
+            if(workerKeys.includes('0')) {
+                if(!workers['0'].verify({value: obj[key], parent: this.values, curr: obj})) {
+                    response.errors.push(workers['0'].errMessage(marker[key].name));
+                    return;
+                }
             }
 
             // If this key is optional then skip other validations if the value is not present.
-            if(!marker[key].required && !isPresent) return;
+            if(!isPresent) return;
+
 
             // If key is not present in given object.
             if (keys.includes(key)) {
-                const { workers } = marker[key];
-                Object.keys(workers).forEach((prop) => { // If the validation failed.
-                    if (!workers[prop].verify(obj[key]))
-                        response.errors.push(workers[prop].errMessage());
-                });
+                for(let idx in workerKeys) {
+                    let prop = workerKeys[idx];
+                    if (!workers[prop].verify({value: obj[key], parent: this.values, curr: obj})) {
+                        response.errors.push(workers[prop].errMessage(marker[key].name));
+                        break;
+                    }
+                };
             }
         });
     }

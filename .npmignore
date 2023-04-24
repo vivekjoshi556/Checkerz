@@ -1,11 +1,10 @@
-node_modules/
-test/
 .github/
+node_modules/
+src/
+test/
+.babelrc
 .eslintrc.json
 .npmignore
 index.js
 notes.txt
 webpack.config.cjs
-.npmignore
-.babelrc
-./src/
