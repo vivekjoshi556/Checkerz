@@ -11,12 +11,26 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+
+      - id: actual_version
+        run: echo "actual_version=$(npm view checkerz version)" >> $GITHUB_OUTPUT
+
+      - run: sudo apt-get install jq
+      
+      - id: curr_version
+        run: echo "curr_version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+
       - run: npm ci
       - run: npm test
+
+    outputs:
+      curr_version: ${{ steps.curr_version.outputs.curr_version }}
+      actual_version: ${{ steps.actual_version.outputs.actual_version }}
 
   publish-npm:
     needs: test
     runs-on: ubuntu-latest
+    if: ${{ needs.test.result == 'success' && needs.test.outputs.curr_version != needs.test.outputs.actual_version }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
