@@ -1,7 +1,7 @@
 export default class IsLength {
     constructor(params) {
         if(params.length == 0)
-            throw new Error("Atleast one argument is required with length validator.");
+            throw new Error("len Rule: Atleast one argument is required with length validator.");
 
         this.mini = params[0];
         this.maxi = (params.length == 1) ? Number.MAX_SAFE_INTEGER : params[1];

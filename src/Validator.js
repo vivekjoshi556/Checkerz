@@ -123,8 +123,7 @@ export default class Validator {
 
             // If key is not present in given object.
             if (keys.includes(key)) {
-                for(let idx in workerKeys) {
-                    let prop = workerKeys[idx];
+                for(let prop of workerKeys) {
                     if (!workers[prop].verify({value: obj[key], parent: this.values, curr: obj})) {
                         response.errors.push(workers[prop].errMessage(marker[key].name));
                         break;

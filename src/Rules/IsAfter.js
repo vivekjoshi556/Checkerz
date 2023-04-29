@@ -6,7 +6,7 @@ export default class IsAfter {
 
         let rule = new IsDate();
         if(!rule.verify({value: this.start})) 
-            throw new Error("Invalid Date in Validator.");
+            throw new Error("after Rule: Invalid Date in Validator.");
 
         this.failedRule = undefined;
     }

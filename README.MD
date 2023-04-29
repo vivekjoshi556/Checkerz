@@ -101,7 +101,7 @@ Checks whether the values is of the type specified.
 - number
 
 Value Rules:
-- Accepted: <br />
+- accepted: <br />
     - Checks if the value is one of the following values: "1", 1, "True", true, "yes", "on".
     - Can be used for checkboxes like for terms & conditions.
 
@@ -111,8 +111,12 @@ Value Rules:
             "tnc": "accepted"
         };
         ```
+- acceptedIf: <br />
+    - Conditional Version of Accepted Rule.
+    - The values should be accepted if a certain key matches some value. If the specified doesn't match the specified value then it doesn't matter whether this key is accepted or not.
+    - The rules for accessing the key to check value are specified here.
 
-- After: <br />
+- after: <br />
     - Checks if the a particular date is after a given date.
     - Can be used to check if user is not giving an invalid date.
     
@@ -123,7 +127,7 @@ Value Rules:
         };
         ```
 
-- AfterOrEqual: <br />
+- afterOrEqual: <br />
     - Similar to after but also returns true for same day.
 
         ```js
@@ -133,7 +137,7 @@ Value Rules:
         };
         ```
 
-- Before: <br />
+- before: <br />
     - Checks if the a particular date is before a given date.
     - Can be used to check age limit based on DOB.
     
@@ -144,7 +148,7 @@ Value Rules:
         };
         ```
 
-- BeforeOrEqual: <br />
+- beforeOrEqual: <br />
     - Similar to before but also returns true for same day.
 
 - confirmed: <br />
@@ -166,6 +170,25 @@ Value Rules:
         };
         ```
 
+- different: <br />
+    - The field under validation must have a different value than the specified fields.
+    - Various keys can be specified separated by commas.
+    - The rules for accessing the key to check value are specified here.
+
+- digits:
+    The integer under validation must have an exact number of digits as specified.
+        
+    ```js
+    "age": "digits:2" // Exactly 3 digits.
+    ```
+
+- digitsBetween:
+    The integer under validation must have digits between the given range.
+
+    ```js
+    "num": "digitsBetween:2,3" // 2-3 Digits.
+    ```
+
 - email: <br />
     Checks if the value is a valid email.
 
@@ -174,6 +197,14 @@ Value Rules:
 
 - gte: <br />
     Checks if the value is greater than or equal to the given number.
+
+- in: <br />
+    Checks whether the value is from one of the value provided or not.
+
+    ```js
+    level: 'number|in:1,2,3,4', // Level can have any value from 1, 2, 3, 4 and nothing else.
+    ```
+
 
 - len: <br />
     - Expects the value to be validated to be an Array or a String.
@@ -196,31 +227,50 @@ Value Rules:
 - lte: <br />
     Checks if the value is less than or equal to the given number.
 
+- notIn: <br />
+    Checks whether the value is from something that is not provided.
+
+    ```js
+    level: 'number|notIn:1,2,3,4', // Level can have any value except 1, 2, 3, 4.
+    ```
+
+- present: <br />
+    The key must be present. The value can be anything undefined, null or something else.
+
+    > This is a conflicting rule with required & requiredIf which means while using one you cannot use the other one.
+
 - required: <br />
     Checks if the value is the value is present & must not be null or undefined.
+
+    > This is a conflicting rule with present & requiredIf which means while using one you cannot use the other one.
 
 - requiredIf: <br />
     - Conditional version of required. 
     - The values is required if a certain key matches some value. If the specified doesn't match the specified value then this becomes an optional field.
-    - Since, we are using objects we have 2 method to reference a key in the object. 
-        - Starting at top: To access from top start with a '.' and then traverse the object as you would with a dot notation. In the example below state is required phone.type = home. (Notice how it starts with a '.').
-
-        - Starting at current level: Traverse the object as you would with a dot notation. (Notice that since it is at same level no '.' is required).
+    - The rules for accessing the key to check value are specified here.
     <br />
+    
+    > This is a conflicting rule with present & required which means while using one you cannot use the other one.
 
-    ```js
-    // Rules validator should use.
-    const rules = {
-        "person": {
-            "name": "string|required",
-            "address": {
-                "state": "string|requiredIf:.phone.type=home",
-                "zip": "string|requiredIf:state=NY"
-            }
-        },
-        "phone": {
-            "number": "string|required",
-            "type": "string|required"
+## Rules to Access Keys During Validation:
+Since, we are using objects we have 2 method to reference a key in the object. 
+- Starting at top: To access from top start with a '.' and then traverse the object as you would with a dot notation. In the example below state is required phone.type = home. (Notice how it starts with a '.').
+
+- Starting at current level: Traverse the object as you would with a dot notation. (Notice that since it is at same level no '.' is required).
+
+```js
+// Rules validator should use.
+const rules = {
+    "person": {
+        "name": "string|required",
+        "address": {
+            "state": "string|requiredIf:.phone.type=home",
+            "zip": "string|requiredIf:state=NY"
         }
-    };
-    ```
+    },
+    "phone": {
+        "number": "string|required",
+        "type": "string|required"
+    }
+};
+```

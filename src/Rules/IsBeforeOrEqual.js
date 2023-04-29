@@ -6,7 +6,7 @@ export default class IsBeforeOrEqual {
 
         let rule = new IsDate();
         if(!rule.verify({value: this.start})) 
-            throw new Error("Invalid Date");
+            throw new Error("beforeOrEqual Rule: Invalid Date");
         
         this.failedRule = undefined;
     }
