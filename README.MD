@@ -75,7 +75,7 @@ Ouput:
     [key]: "[rule1] | [rule2] | [name]"
     ```
     
-    #### ** The new name must not match any rule.
+    > The new name must not match any rule.
 
 - If you want to change the name of the key the value of which is an object, you can pass in a __name property and specify the name you want to use.
     
@@ -87,7 +87,7 @@ Ouput:
     },
     ```
 
-    #### ** All the errors in any child will be referenced with respect to that name.
+    > All the errors in any child will be referenced with respect to that name.
     For eg. If the state's len property fails the name used will be 'Address.city' in the error message.
 
 ## Available Rules
@@ -100,6 +100,8 @@ Checks whether the values is of the type specified.
 - string
 - number
 
+    > Type Rules are conflicting rules with each other which means while using one you cannot use the other one for validation.
+
 Value Rules:
 - accepted: <br />
     - Checks if the value is one of the following values: "1", 1, "True", true, "yes", "on".
@@ -111,10 +113,15 @@ Value Rules:
             "tnc": "accepted"
         };
         ```
+    
+    > This is a conflicting rule with acceptedIf, present, required, & requiredIf which means while using one you cannot use the other one.
+    
 - acceptedIf: <br />
     - Conditional Version of Accepted Rule.
     - The values should be accepted if a certain key matches some value. If the specified doesn't match the specified value then it doesn't matter whether this key is accepted or not.
     - The rules for accessing the key to check value are specified here.
+
+    > This is a conflicting rule with accepted, present, required, & requiredIf which means while using one you cannot use the other one.
 
 - after: <br />
     - Checks if the a particular date is after a given date.
@@ -237,12 +244,13 @@ Value Rules:
 - present: <br />
     The key must be present. The value can be anything undefined, null or something else.
 
-    > This is a conflicting rule with required & requiredIf which means while using one you cannot use the other one.
+    > This is a conflicting rule with accepted, acceptedIf, required, & requiredIf which means while using one you cannot use the other one.
 
 - required: <br />
-    Checks if the value is the value is present & must not be null or undefined.
+    - Checks if the value is the value is present & must not be null or undefined.
+    - If a value is not required it will be considered optional and the validation for such properties will be skipped in case the value is absent in the object to be validted.
 
-    > This is a conflicting rule with present & requiredIf which means while using one you cannot use the other one.
+    > This is a conflicting rule with accepted, acceptedIf, present, & requiredIf which means while using one you cannot use the other one.
 
 - requiredIf: <br />
     - Conditional version of required. 
@@ -250,7 +258,7 @@ Value Rules:
     - The rules for accessing the key to check value are specified here.
     <br />
     
-    > This is a conflicting rule with present & required which means while using one you cannot use the other one.
+    > This is a conflicting rule with accepted, acceptedIf, present, & required which means while using one you cannot use the other one.
 
 ## Rules to Access Keys During Validation:
 Since, we are using objects we have 2 method to reference a key in the object. 

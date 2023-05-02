@@ -100,7 +100,40 @@ describe("Type Rules Tests", () => {
         [RuleFactory("confirmed", name).rule, {"value": "something", "curr": {"test_confirmed": "something"}}, true],
         [RuleFactory("confirmed", name).rule, {"value": "something", "curr": {"test_confirmed": "somethingElse"}}, false],
         [RuleFactory("confirmed", name).rule, {"value": "something", "curr": {}}, false],
-    ])("# Rule", (rule, value, result) => {
+    ])("Confirmed Rule", (rule, value, result) => {
+        expect(rule.verify(value)).toBe(result);
+    });
+
+    test.each([
+        [RuleFactory("digits", name, 4).rule, 123, false],
+        [RuleFactory("digits", name, 4).rule, 12345, false],
+        [RuleFactory("digits", name, 4).rule, 1234, true],
+
+        [RuleFactory("digitsBetween", name, 2, 3).rule, 0, false],
+        [RuleFactory("digitsBetween", name, 2, 3).rule, 12, true],
+        [RuleFactory("digitsBetween", name, 2, 3).rule, 123, true],
+        [RuleFactory("digitsBetween", name, 2, 3).rule, 1234, false],
+    ])("Digits/DigitsBetween Rule", (rule, value, result) => {
+        expect(rule.verify({value: value})).toBe(result);
+    });
+
+    // The passed arguments will be strings for now because that is what is matched for now.
+    test.each([
+        [RuleFactory("in", name, "hello", "there", "1").rule, "10", false],
+        [RuleFactory("in", name, "hello", "there", "1").rule, "foo", false],
+        [RuleFactory("in", name, "hello", "there", "1").rule, "hello", true],
+
+        [RuleFactory("notIn", name, "hello", "there", "1").rule, "10", true],
+        [RuleFactory("notIn", name, "hello", "there", "1").rule, "foo", true],
+        [RuleFactory("notIn", name, "hello", "there", "1").rule, "hello", false],
+    ])("In/NotIn Rule", (rule, value, result) => {
+        expect(rule.verify({value: value})).toBe(result);
+    });
+
+    test.each([
+        [RuleFactory("present", "foo").rule, {"curr": {"foo": "bar"}}, true],
+        [RuleFactory("present", "foo").rule, {"curr": {}}, false],
+    ])("Present Rule", (rule, value, result) => {
         expect(rule.verify(value)).toBe(result);
     });
 

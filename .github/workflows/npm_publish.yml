@@ -45,6 +45,7 @@ jobs:
       - run: npm ci
       # Build for ES5 & ES6
       - run: npm run build
+      - run: rm ./dist/Checkerz_ES5.js.LICENSE.txt
       # Publish the package.
       - run: npm publish
         env:

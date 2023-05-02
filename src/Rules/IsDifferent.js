@@ -20,6 +20,6 @@ export default class IsDifferent {
     }
 
     errMessage(name) {
-        return `${name} values were repeated.`;
+        return `${name} value was repeated.`;
     }
 }

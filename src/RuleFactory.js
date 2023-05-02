@@ -36,33 +36,36 @@ import IsPresent from './Rules/IsPresent.js';
  *      : level: Priority of rule. Same value means only one of those rules can be present at once for a key.
  */
 const rules = {
-    'accepted': {rule: IsAccepted, idx: false, params: false, level: 100},
-    'acceptedIf': {rule: IsAcceptedIf, idx: false, params: false, level: 112},
+    'accepted': {rule: IsAccepted, idx: false, params: false, level: 0},
+    'acceptedIf': {rule: IsAcceptedIf, idx: false, params: true, level: 0},
+    'present': {rule: IsPresent, idx: true, params: false, level: 0},
+    'required': {rule: IsRequired, idx: false, params: false, level: 0},
+    'requiredIf': {rule: IsRequiredIf, idx: false, params: true, level: 0},
+
     'array': {rule: IsArray, idx: false, params: false, level: 1},
+    'boolean': {rule: IsBoolean, idx: false, params: false, level: 1},
+    'date': {rule: IsDate, idx: false, params: false, level: 1},
+    'json': {rule: IsJSON, idx: false, params: false, level: 1},
+    'number': {rule: IsNumber, idx: false, params: false, level: 1},
+    'string': {rule: IsString, idx: false, params: false, level: 1},
+    
     'after': {rule: IsAfter, idx: false, params: true, level: 101},
     'afterOrEqual': {rule: IsAfterOrEqual, idx: false, params: true, level: 102},
     'before': {rule: IsBefore, idx: false, params: true, level: 103},
     'beforeOrEqual': {rule: IsBeforeOrEqual, idx: false, params: true, level: 104},
-    'boolean': {rule: IsBoolean, idx: false, params: false, level: 1},
     'confirmed': {rule: IsConfirmed, idx: true, params: false, level: 105},
-    'date': {rule: IsDate, idx: false, params: false, level: 1},
-    'different': {rule: IsDifferent, idx: false, params: true, level: 113},
-    'digits': {rule: IsDigits, idx: false, params: true, level: 114},
-    'digitsBetween': {rule: IsDigitsBetween, idx: false, params: true, level: 115},
     'email': {rule: IsValidEmail, idx: false, params: false, level: 106},
     'gt': {rule: IsGreaterThan, idx: false, params: true, level: 107},
     'gte': {rule: IsGreaterThanEqualTo, idx: false, params: true, level: 108},
-    'in': {rule: IsIn, idx: false, params: true, level: 116},
-    'json': {rule: IsJSON, idx: false, params: false, level: 1},
     'len': {rule: IsLen, idx: false, params: true, level: 109},
     'lt': {rule: IsLessThan, idx: false, params: true, level: 110},
     'lte': {rule: IsLessThanEqualTo, idx: false, params: true, level: 111},
-    'number': {rule: IsNumber, idx: false, params: false, level: 1},
-    'notIn': {rule: IsNotIn, idx: false, params: true, level: 116},
-    'present': {rule: IsPresent, idx: true, params: false, level: 0},
-    'required': {rule: IsRequired, idx: false, params: false, level: 0},
-    'requiredIf': {rule: IsRequiredIf, idx: false, params: true, level: 0},
-    'string': {rule: IsString, idx: false, params: false, level: 1},
+    'different': {rule: IsDifferent, idx: false, params: true, level: 112},
+    'digits': {rule: IsDigits, idx: false, params: true, level: 113},
+    'digitsBetween': {rule: IsDigitsBetween, idx: false, params: true, level: 114},
+
+    'in': {rule: IsIn, idx: false, params: true, level: 115},
+    'notIn': {rule: IsNotIn, idx: false, params: true, level: 115},
 };
 
 /**
@@ -75,7 +78,7 @@ const rules = {
  */
 export default function RuleFactory(type, idx, ...params) {
     if(!isValidRule(type))
-        throw new ReferenceError(`${type} rule is not defined`);
+        throw new ReferenceError(`"${type}" rule is not defined`);
     
     let requirements = [];
     if(rules[type].params) requirements = [...params];

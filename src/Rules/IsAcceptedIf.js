@@ -1,3 +1,5 @@
+import RuleFactory from "../RuleFactory.js";
+
 export default class IsAcceptedIf {
     constructor([conditions]) {
         this.key = conditions.split('=')[0];
