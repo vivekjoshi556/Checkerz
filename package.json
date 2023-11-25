@@ -1,6 +1,6 @@
 {
     "name": "checkerz",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "type": "module",
     "description": "A package to validate input.",
     "author": "Vivek Joshi",
@@ -12,7 +12,8 @@
     ],
     "scripts": {
         "start": "npm run build && nodemon index.js",
-        "test": "jest",
+        "test": "jest && npm run lint",
+        "lint": "npx eslint ./src && npx eslint test",
         "build": "webpack"
     },
     "repository": {

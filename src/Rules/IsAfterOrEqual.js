@@ -1,29 +1,29 @@
-import IsDate from "./IsDate.js";
+import IsDate from './IsDate.js'
 
 export default class IsAfterOrEqual {
-    constructor(start) {
-        this.start = new Date(start);
+  constructor([start]) {
+    this.start = new Date(start)
 
-        let rule = new IsDate();
-        if(!rule.verify({value: this.start})) 
-            throw new Error("afterOrEqual Rule: Invalid Date in Validator.");
-        
-        this.failedRule = undefined;
+    this.rule = new IsDate()
+    if (!this.rule.verify({ value: this.start })) {
+      throw new Error('afterOrEqual Rule: Invalid Date in Validator.')
     }
 
-    verify({value}) {
-        let rule = new IsDate();
-        if(!rule.verify({value: value})) {
-            this.failedRule = rule;
-            return false;
-        }
-        
-        return this.start.getTime() <= value.getTime();
+    this.failedRule = undefined
+  }
+
+  verify({ value }) {
+    const rule = new IsDate()
+    if (!rule.verify({ value })) {
+      this.failedRule = rule
+      return false
     }
 
-    errMessage(name) {
-        if(this.failedRule !== undefined)
-            return rule.errMessage(name);
-        return `${name} must be a date after or equal to ${this.start}.`;
-    }
+    return this.start.getTime() <= value.getTime()
+  }
+
+  errMessage(name) {
+    if (this.failedRule !== undefined) return this.rule.errMessage(name)
+    return `${name} must be a date after or equal to ${this.start}.`
+  }
 }

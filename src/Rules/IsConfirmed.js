@@ -1,13 +1,13 @@
 export default class IsConfirmed {
-    constructor(key) {
-        this.key = key;
-    }
-    
-    verify({value, curr}) {
-        return value === curr[this.key + "_confirmed"];
-    }
+  constructor([key]) {
+    this.key = key
+  }
 
-    errMessage(name) {
-        return `${name} confirmation failed.`;
-    }
+  verify({ value, curr }) {
+    return value === curr[this.key + '_confirmed']
+  }
+
+  errMessage(name) {
+    return `${name} confirmation failed.`
+  }
 }

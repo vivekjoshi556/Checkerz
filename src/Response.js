@@ -1,13 +1,13 @@
 export default class Response {
-    constructor() {
-        this.errors = [];
-    }
+  constructor() {
+    this.errors = []
+  }
 
-    get passed() {
-        return this.errors.length === 0;
-    }
+  get passed() {
+    return this.errors.length === 0
+  }
 
-    errors() {
-        return this.errors;
-    }
+  errors() {
+    return this.errors
+  }
 }
